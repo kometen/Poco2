@@ -6,24 +6,97 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+#include <curlpp/cURLpp.hpp>
+#include <curlpp/Easy.hpp>
+#include <curlpp/Options.hpp>
+#include <curlpp/Exception.hpp>
+
+#include <pqxx/pqxx>
+
 #include "MyHandler.hpp"
 
 using namespace std;
 
-int main() {
-	cout << "Poco2 Blåbærsyltetøj" << endl;
-	auto s = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><d2LogicalModel modelBaseVersion=\"2\" xmlns=\"http://datex2.eu/schema/2/2_0\"><exchange><supplierIdentification><country>no</country><nationalIdentifier>Norwegian Public Roads Administration</nationalIdentifier></supplierIdentification></exchange><payloadPublication xsi:type=\"MeasurementSiteTablePublication\" lang=\"nob\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><publicationTime>2016-02-19T14:21:30.638+01:00</publicationTime><publicationCreator><country>no</country><nationalIdentifier>Norwegian Public Roads Administration</nationalIdentifier></publicationCreator><headerInformation><confidentiality>noRestriction</confidentiality><informationStatus>real</informationStatus></headerInformation><measurementSiteTable version=\"20160219141823000\" id=\"WOST\"><measurementSiteTableIdentification>WEATHER_OBSERVATION_STATION_TABLE</measurementSiteTableIdentification><measurementSiteRecord version=\"5\" id=\"205\"><measurementSiteName><values><value lang=\"nob\">E6 Rosten</value></values></measurementSiteName><measurementSpecificCharacteristics index=\"801\"><measurementSpecificCharacteristics><specificMeasurementValueType>roadSurfaceConditionInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"301\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"201\"><measurementSpecificCharacteristics><specificMeasurementValueType>humidityInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"101\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"2501\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"2201\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"1401\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"701\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSiteLocation xsi:type=\"Point\"><pointByCoordinates><pointCoordinates><latitude>61.878387</latitude><longitude>9.415452</longitude></pointCoordinates></pointByCoordinates></measurementSiteLocation></measurementSiteRecord><measurementSiteRecord version=\"5\" id=\"206\"><measurementSiteName><values><value lang=\"nob\">Rv 4 Lygna</value></values></measurementSiteName><measurementSpecificCharacteristics index=\"801\"><measurementSpecificCharacteristics><specificMeasurementValueType>roadSurfaceConditionInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"301\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"201\"><measurementSpecificCharacteristics><specificMeasurementValueType>humidityInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"101\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"2501\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"2201\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"1401\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"701\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSiteLocation xsi:type=\"Point\"><pointByCoordinates><pointCoordinates><latitude>60.454544</latitude><longitude>10.64202</longitude></pointCoordinates></pointByCoordinates></measurementSiteLocation></measurementSiteRecord><measurementSiteRecord version=\"4\" id=\"207\"><measurementSiteName><values><value lang=\"nob\">E14 Teveldal</value></values></measurementSiteName><measurementSpecificCharacteristics index=\"1001\"><measurementSpecificCharacteristics><specificMeasurementValueType>windInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"901\"><measurementSpecificCharacteristics><specificMeasurementValueType>windInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"801\"><measurementSpecificCharacteristics><specificMeasurementValueType>roadSurfaceConditionInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"301\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"201\"><measurementSpecificCharacteristics><specificMeasurementValueType>humidityInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"101\"><measurementSpecificCharacteristics><specificMeasurementValueType>temperatureInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSpecificCharacteristics index=\"2501\"><measurementSpecificCharacteristics><specificMeasurementValueType>precipitationInformation</specificMeasurementValueType></measurementSpecificCharacteristics></measurementSpecificCharacteristics><measurementSiteLocation xsi:type=\"Point\"><pointByCoordinates><pointCoordinates><latitude>63.342346</latitude><longitude>12.029278</longitude></pointCoordinates></pointByCoordinates></measurementSiteLocation></measurementSiteRecord></measurementSiteTable></payloadPublication></d2LogicalModel>";
-	MyHandler handler {};
-    Poco::XML::SAXParser parser {};
-    parser.setFeature(Poco::XML::XMLReader::FEATURE_NAMESPACES, false);
-    parser.setFeature(Poco::XML::XMLReader::FEATURE_NAMESPACE_PREFIXES, true);
-    parser.setContentHandler(&handler);
-
-    try {
-        parser.parseString(s);
-//                  parser.parseString(out.str());
-    } catch (Poco::Exception& e) {
-        cerr << e.displayText() << endl;
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cerr << "Usage: " << argv[0] << " <username> <password>" << endl;
+        return EXIT_FAILURE;
     }
-	return 0;
+    try {
+        try {
+            // Connect to database.
+            pqxx::connection C("dbname=weather user=claus hostaddr=127.0.0.1 port=5432");
+            if (!C.is_open()) {
+                cerr << "Unable to connect to database" << C.dbname() << endl;
+                return EXIT_FAILURE;
+            }
+
+            // Get this using curl.
+            const string url = "https://www.vegvesen.no/ws/no/vegvesen/veg/trafikkpublikasjon/vaer/1/GetMeasurementWeatherSiteTable/";
+
+            std::string username = argv[1];
+            std::string password = argv[2];
+            std::string credentials = username + ":" + password;
+
+            curlpp::Cleanup cleaner;
+            curlpp::Easy request;
+
+            request.setOpt(new curlpp::options::Url(url));
+            request.setOpt(new curlpp::options::UserPwd(credentials));
+
+            ostringstream out;
+            out << request;
+
+            auto ss = out.str();
+
+            boost::algorithm::replace_all(ss, "&#230;", "æ");
+            boost::algorithm::replace_all(ss, "&#248;", "ø");
+            boost::algorithm::replace_all(ss, "&#229;", "å");
+            boost::algorithm::replace_all(ss, "&#198;", "Æ");
+            boost::algorithm::replace_all(ss, "&#216;", "Ø");
+            boost::algorithm::replace_all(ss, "&#197;", "Å");
+
+            // Parse response.
+            MyHandler handler {};
+            Poco::XML::SAXParser parser {};
+            parser.setFeature(Poco::XML::XMLReader::FEATURE_NAMESPACE_PREFIXES, true);
+            parser.setContentHandler(&handler);
+
+            try {
+                parser.parseString(ss);
+            } catch (Poco::Exception& e) {
+                cerr << e.displayText() << endl;
+            }
+
+            auto l = handler.locations();
+            for (auto& i : l) {
+                cout << i.first << ", " << i.second.measurementSiteName() << ", " << i.second.latitude() << ", " << i.second.longitude() << endl;
+            }
+
+/*            string sql = "insert into readings (_id, date, relative_humidity, precipitation, road_surface_temperature";
+            sql += ", snow_depth, wind_speed, wind_direction, temperature, dew_point_temperature, visibility)";
+            sql += " values (" + parse.id() + ", '" + parse.date() + "'";
+            sql += ", " + to_string(parse.relative_humidity()) + ", " + to_string(parse.precipitation());
+            sql += ", " + to_string(parse.road_surface_temperature()) + ", " + to_string(parse.snowdepth());
+            sql += ", " + to_string(parse.windspeed()) + ", " + to_string(parse.winddirection());
+            sql += ", " + to_string(parse.temperature()) + ", " + to_string(parse.dew_point_temperature());
+            sql += ", " + to_string(parse.visibility()) + ")";*/
+
+            pqxx::work W(C);
+//            W.exec(sql);
+            W.commit();
+            C.disconnect();
+            return EXIT_SUCCESS;
+        } catch (const exception& e) {
+            cerr << e.what() << endl;
+            return EXIT_FAILURE;
+        }
+
+    } catch (curlpp::LogicError& e) {
+        cout << e.what() << endl;
+    } catch (curlpp::RuntimeError& e) {
+        cout << e.what() << endl;
+    }
+
+    return EXIT_FAILURE;
 }

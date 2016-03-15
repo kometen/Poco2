@@ -32,7 +32,7 @@ void MyHandler::startElement(const Poco::XML::XMLString& namespaceURI, const Poc
             for (int i = 0; i < x; ++i) {
                 if (attributes.getQName(i) == "id") {
                     _site_id = attributes.getValue(i);
-                    std::cout << "site id: " << _site_id << std::endl;
+//                    std::cout << "site id: " << _site_id << std::endl;
                 }
             }
         }
@@ -61,18 +61,18 @@ void MyHandler::characters(const Poco::XML::XMLChar ch[], int start, int length)
     // We have a site name. XXX Convert html entity to æøå. Boost.
     if (counter == 3) {
         _measurementSiteName = std::string(ch + start, length);
-        std::cout << "site name: " << _measurementSiteName << std::endl;
+//        std::cout << "site name: " << _measurementSiteName << ", start: " << start <<", length: " << length << std::endl;
     }
 
     // Grab latitude and longitude.
     if (_lat) {
         _latitude = std::string(ch + start, length);
-        std::cout << "latitude: " << _latitude << std::endl;
+//        std::cout << "latitude: " << _latitude << std::endl;
         _lat = false;
     }
     if (_lon) {
         _longitude = std::string(ch + start, length);
-        std::cout << "longitude: " << _longitude << std::endl;
+//        std::cout << "longitude: " << _longitude << std::endl;
         _lon = false;
     }
 }

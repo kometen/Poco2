@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <unordered_map>
+
+#include <boost/algorithm/string/replace.hpp>
 #include <Poco/SAX/Attributes.h>
 #include <Poco/SAX/ContentHandler.h>
 #include <Poco/SAX/SAXParser.h>
