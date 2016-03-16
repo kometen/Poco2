@@ -25,9 +25,9 @@ int main(int argc, char* argv[]) {
     try {
         try {
             // Connect to database.
-            pqxx::connection C("dbname=weather user=claus hostaddr=127.0.0.1 port=5432");
-            if (!C.is_open()) {
-                cerr << "Unable to connect to database" << C.dbname() << endl;
+            pqxx::connection D("dbname=weather user=claus hostaddr=127.0.0.1 port=5432");
+            if (!D.is_open()) {
+                cerr << "Unable to connect to database" << D.dbname() << endl;
                 return EXIT_FAILURE;
             }
 
@@ -47,8 +47,8 @@ int main(int argc, char* argv[]) {
             ostringstream out;
             out << request;
 
+            // Convert html-encoded letters to uft-8 equivalent.
             auto ss = out.str();
-
             boost::algorithm::replace_all(ss, "&#230;", "æ");
             boost::algorithm::replace_all(ss, "&#248;", "ø");
             boost::algorithm::replace_all(ss, "&#229;", "å");
@@ -67,25 +67,44 @@ int main(int argc, char* argv[]) {
             } catch (Poco::Exception& e) {
                 cerr << e.displayText() << endl;
             }
-
             auto l = handler.locations();
-            for (auto& i : l) {
-                cout << i.first << ", " << i.second.measurementSiteName() << ", " << i.second.latitude() << ", " << i.second.longitude() << endl;
+
+            // Get a list of current locations.
+            pqxx::connection C("dbname=weather user=claus hostaddr=127.0.0.1 port=5432");
+            if (!C.is_open()) {
+                cerr << "Unable to connect to database " << C.dbname() << endl;
+                return EXIT_FAILURE;
             }
 
-/*            string sql = "insert into readings (_id, date, relative_humidity, precipitation, road_surface_temperature";
-            sql += ", snow_depth, wind_speed, wind_direction, temperature, dew_point_temperature, visibility)";
-            sql += " values (" + parse.id() + ", '" + parse.date() + "'";
-            sql += ", " + to_string(parse.relative_humidity()) + ", " + to_string(parse.precipitation());
-            sql += ", " + to_string(parse.road_surface_temperature()) + ", " + to_string(parse.snowdepth());
-            sql += ", " + to_string(parse.windspeed()) + ", " + to_string(parse.winddirection());
-            sql += ", " + to_string(parse.temperature()) + ", " + to_string(parse.dew_point_temperature());
-            sql += ", " + to_string(parse.visibility()) + ")";*/
+            std::string query = "select * from locations";
+            pqxx::nontransaction N(C);
+            pqxx::result R(N.exec(query));
 
-            pqxx::work W(C);
-//            W.exec(sql);
-            W.commit();
+            //  Remove locations already present.
+            for (pqxx::result::const_iterator c = R.begin(); c != R.end(); ++c) {
+                l.erase(to_string(c[1].as<int>()));
+            }
             C.disconnect();
+
+            // Insert new locations.
+            std::string coordinate {};
+            std::string prepared_table = "prep_locations";
+            for (auto& i : l) {
+                pqxx::work W(D);
+                // Set to default values.
+                query = "insert into locations(site_id,description,coordinate) values ($1,$2,$3)";
+                coordinate = "(" + i.second.longitude() + "," + i.second.latitude() + ")";
+                cout << i.first << ", " << i.second.measurementSiteName() << ", " << coordinate << endl;
+                D.prepare(prepared_table, query);
+                try {
+                    W.prepared(prepared_table)(i.first)(i.second.measurementSiteName())(coordinate).exec();
+                    W.commit();
+                } catch (const pqxx::sql_error& e) {
+                    cerr << "unable to insert, error: " << e.what() << endl;
+                }
+            }
+
+            D.disconnect();
             return EXIT_SUCCESS;
         } catch (const exception& e) {
             cerr << e.what() << endl;
