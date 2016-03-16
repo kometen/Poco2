@@ -94,7 +94,6 @@ int main(int argc, char* argv[]) {
                 // Set to default values.
                 query = "insert into locations(site_id,description,coordinate) values ($1,$2,$3)";
                 coordinate = "(" + i.second.longitude() + "," + i.second.latitude() + ")";
-                cout << i.first << ", " << i.second.measurementSiteName() << ", " << coordinate << endl;
                 D.prepare(prepared_table, query);
                 try {
                     W.prepared(prepared_table)(i.first)(i.second.measurementSiteName())(coordinate).exec();
