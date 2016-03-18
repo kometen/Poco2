@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
             for (auto& i : l) {
                 pqxx::work W(D);
                 // Set to default values.
-                query = "insert into locations(site_id,description,coordinate) values ($1,$2,$3)";
+                query = "insert into locations(site_id,measurementsitename,coordinate) values ($1,$2,$3)";
                 coordinate = "(" + i.second.longitude() + "," + i.second.latitude() + ")";
                 D.prepare(prepared_table, query);
                 try {
